@@ -37,7 +37,8 @@ cp dist/agent-wizard/browser/index.html dist/agent-wizard/browser/404.html
 ```
 
 - Build timestamp: `2026-10-27T00:11:45Z`
-- Output bundle: `dist/agent-wizard/browser/` (13 files, 1 674 677 bytes)
+- Output bundle: `dist/agent-wizard/browser/` — 11 files, 1 674 677 bytes in total
+  (12 files on this branch once `.nojekyll` is added)
 - `404.html` is a copy of `index.html`, so deep links resolve to the SPA shell.
 - `.nojekyll` is present so GitHub Pages serves the tree verbatim.
 
