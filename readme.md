@@ -283,16 +283,6 @@ Releases are **git tags** on this clone — there is no package manager and no p
 - **Roll back:** `git checkout <tag>` (e.g. `v1.0.0`) to return the clone to a known validated state.
 - **Propagation:** `protocols/` and `code-lang/` edits are plain markdown read on demand, so they apply on the **next read**; `agents/*.md` are runtime-loaded agent definitions, and `opencode.json` changes (including `agents.<id>.model`) require a new session or an opencode **restart**.
 
-## Credits
-
-- **Cloudflare security-review skill** (MIT) — procedural inspiration for
-  [`protocols/security-review.md`](./protocols/security-review.md); no code copied.
-- **IagoLast/files** (no license) — minimalism and testing ideas; ideas only, no
-  text copied.
-- **QwenLM/Qwen-Live-Harness** (Apache-2.0) — prose disciplines only
-  (receipt ≠ completion, no blind replay, verification discipline); no code
-  vendored.
-
 ## Troubleshooting
 
 **"My config is not picked up"** — Verify `opencode.json` is valid JSON:
