@@ -12,7 +12,7 @@ One canonical shape for every subagent spec, so the orchestrator, human reviewer
 |---|---|---|
 | `description` | **required** | One line, routing-oriented — the orchestrator reads this to decide delegation. Name the discipline, the accepted task shapes, and the structured return if any. |
 | `mode` | **required** | Literal value (`primary` for delivery, `subagent` for everything else). |
-| `model` | optional | Fully qualified (`<provider>/<model>`). Declared in the agent's frontmatter as an explicit override; when omitted, the subagent inherits the invoking primary agent's model. Part of the cost contract — see the orchestrator's subagent table. |
+| `model` | optional | Fully qualified (`<provider>/<model>`). The operator sets each agent's model at `opencode.json` → `agents.<id>.model`; a frontmatter `model:` here is an optional override. When neither is set, the subagent inherits the invoking primary agent's model. Part of the cost contract — see the orchestrator's subagent table. |
 | `permission` | optional | The agent-level permission block (e.g. read-only adapters, `task` fan-out grants). `task` is the subagent-dispatch gate on V2: `task: deny` blocks recursion, `task: { <agent>: allow }` grants it. Valid V2 action keys include `read`, `edit`, `glob`, `grep`, `list`, `bash`, `task`, `webfetch`, `websearch`, `question`, `external_directory`, `lsp`, `skill`, `doom_loop` — `webfetch`/`websearch` are first-class, not legacy. |
 | `output_schema` | optional | Relative path to the sibling JSON Schema (`./<id>.schema.json`) — see the bridge below. |
 
@@ -32,7 +32,7 @@ The 7+1 canonical headings are grouped into 3 macro sections. The mapping is los
 | 2 — Execution / Standards | `<!-- Section 2: Execution -->` | `### Standards`, `### Anti-Patterns`, (slot) role-specific operational sections | how to work + what to avoid |
 | 3 — Finalization / Return | `<!-- Section 3: Finalization -->` | `### Structured Return`, `### Rules` | output contract + hard rules |
 
-Frontmatter remains the single source of truth for per-agent config (`description`, `mode`, `model`, `permission`, `output_schema`). `opencode.json` carries top-level runtime only, never a per-agent block. A manually created subagent MUST emit the three macro anchors.
+Frontmatter remains the source of truth for per-agent config (`description`, `mode`, `permission`, `output_schema`); the operator-owned `model` lives at `opencode.json` → `agents.<id>.model`, with a frontmatter `model:` as an optional override. A manually created subagent MUST emit the three macro anchors.
 
 Canonical order of the headings:
 
@@ -119,22 +119,21 @@ Rules for thin variants:
 - Subagents without an `output_schema` return plain text (or markdown); their `## Structured Return` (full shape) or `## Contract` (thin Variant B) describes the expected return in prose. Current subagents without a schema, **by design**: `delivery` (markdown turn contract), `orchestrator` (markdown agent-snapshot), `external-scout` (plain-text contract). These three are **prose-only contracts** — no `output_schema` is intended. `delivery` and `orchestrator` additionally carry a **typed coordination envelope** on the two hops between them (typed `status` / `files_changed` / `subagent_outcomes` around the markdown report), defined in `agents/orchestrator.md` → `## Handoff Protocol`; the envelope is a convention the two seats read, not an `output_schema` (V2 would not enforce it either way), so the prose-only statement still holds.
 - **`output_schema` is NOT runtime-enforced.** On opencode V2 it is not a recognized agent field: it is captured as a legacy rest key and routed to `request.body` (preserved, not sent), and the subagent tool returns the child's final text as an opaque string without validating it (JSON is a convention, not a runtime contract). The runtime does not preserve raw text for diagnostics. This spec owns the behavior explanation; callers (`delivery`, `orchestrator`, and fan-out callers) follow the single manual responsibility in [`subagent-return-check.md`](./subagent-return-check.md), optionally tool-assisted. The orchestrator's Hard Limits and delivery's direct-call rule enforce that procedure: at most one repair per original child, no reinterpretation or fabricated validity, and no uncapped competing loop. Never write `summary.md` / `output-full.md` / `manifest.md` to disk — the runtime captures returns on the EventV2 bus.
 
-## `opencode.json` — top-level runtime knobs only
+## `opencode.json` — top-level runtime + the per-agent model map
 
-`opencode.json` carries **top-level runtime config only**: `$schema`, `default_agent`, `permissions` (global), `references`, `compaction`, `experimental`, `mcp`, `model`, and `agents` (the built-in `title` model slot ONLY — not a per-agent block; `agents.title.model` supplies the title-generation model and is also read at dispatch time by the orchestrator as the cheap, different-family model-independence slot for `reviewer`/`analista` and the Typed-Decision Panel). There is **no per-agent block** — every per-agent field (including `model`) lives in the agent's `.md` frontmatter.
-
-Every per-agent field lives in the agent's `.md` frontmatter:
+`opencode.json` carries **top-level runtime config**: `$schema`, `default_agent`, `permissions` (global), `references`, `compaction`, `experimental`, `mcp`, `model` (the default/inherited model), and `agents` — the operator-owned **per-agent model map**, one `agents.<id>.model` entry per configured agent id. That is the only per-agent field that lives in `opencode.json`; every other per-agent field (`description`, `mode`, `permission`, `output_schema`) lives in the agent's `.md` frontmatter.
 
 | Field | Home |
 |---|---|
-| `description`, `mode`, `model`, `permission` | The agent `.md` frontmatter |
+| `description`, `mode`, `permission` | The agent `.md` frontmatter |
+| `model` | `opencode.json` → `agents.<id>.model` (operator-set); a frontmatter `model:` is an optional override |
 | `output_schema` | Frontmatter path → sibling `<id>.schema.json` |
 | `permission.task` fan-out (which subagents `delivery` / `orchestrator` may call) | Frontmatter of `delivery.md` / `orchestrator.md` |
 | Global `permissions` rules (`{action, resource, effect}`) | Stay in `opencode.json` |
 
-**To change a model**: edit the agent's frontmatter (`agents/<id>.md`), then restart opencode. `opencode.json` is untouched.
+**To change a model**: edit `opencode.json` → `agents.<id>.model`, then restart opencode. A frontmatter `model:` in `agents/<id>.md` remains an optional override; when neither is set, the seat inherits the invoking primary agent's model.
 
-Rationale: the `.md` is the canonical artifact the runtime loads; keeping `model` in the agent file makes each agent self-contained — one file to read for everything about that agent, with no frontmatter↔JSON drift. `opencode.json` shrinks to true runtime config.
+Rationale: the operator owns the model roster in one place, so the cost contract is auditable at a glance and a model swap is a one-line JSON edit plus a restart. The frontmatter override stays available for a seat that must pin a model, and the `.md` stays the canonical home for everything else about that agent.
 
 ## Naming convention
 
