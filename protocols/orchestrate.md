@@ -58,6 +58,7 @@ Where a rule legitimately appears in two files, the split is exactly the procedu
 
 - [`prompt-pipeline.md`](./prompt-pipeline.md) — Step 0 (Interpret) and Phase 2 (Reduce).
 - [`session-recovery.md`](./session-recovery.md) — resume flow when a session dies mid-stage.
+- **`executionUncertain` / no blind replay** — see `## Outcome feedback (bounded)` and [`session-recovery.md`](./session-recovery.md); an interrupted step is never replayed blindly.
 - `agents/orchestrator.md` — Project Context Source, Decision Hierarchy, Confidence Gate, Hard Limits, Rules, Handoff Protocol.
 
 ## Notes

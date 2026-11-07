@@ -123,6 +123,12 @@ Walk the opencode session API in this order:
 > **manual human action** to discard a half-applied diff, but it is not part of
 > the system's resume mechanism and does not reinstate the seat's state.
 
+> **Never blindly replay.** After an interruption, classify the interrupted step
+> from `GET /session/:id/diff` and `GET /session/:id/todo` as **applied**,
+> **not-applied**, or **unknown**; replay only not-applied steps, and never
+> blindly replay writes, commands, or approvals. On **unknown**, surface
+> `NEEDS_HUMAN` — do not guess.
+
 ### Mode 3 — subagent child interrupted inside a LIVE orchestrator
 
 Already handled by `STATUS: STUCK` in `agents/orchestrator.md`. This
