@@ -32,6 +32,14 @@ These are the orchestrator's own thinking stages. `prompt-pipeline` Step 0 (Inte
 5. **Verification** — run the canonical commands from `docs/project.md` for the affected package directory (the `do-not-run-tests-from-root` guard, thinking rule 6).
 6. **Documentation** — update the relevant docs in the project's `doc_language` (thinking rule 5; English for agent-system files).
 
+## Outcome feedback (bounded)
+
+Closes the loop on stage 5 (Verification): when a return does not meet its verification path, the orchestrator may re-iterate **once** — never in an open-ended retry loop.
+
+- **At most one bounded re-iteration.** Re-release the child with the concrete gap and the evidence it must produce, labeled `verification-retry` — the launch-dedup carve-out. If the second return still misses, stop and report the gap as `NEEDS_HUMAN` or `STUCK`; do not launch a third attempt.
+- **Receipt ≠ completion.** A child return is a *receipt* that the child answered — not proof that the work was done. `completed` requires verification evidence: a file read showing the change, a command run showing the result, or a criterion demonstrably met. Without that evidence, record the outcome as **completed-unverified** and say so in the snapshot.
+- **executionUncertain.** A timeout or a lost acknowledgement does not prove the child stopped executing. Treat the step's apply-state as unknown, inspect the diff and todo before re-dispatching, and never blindly replay writes, commands, or approvals.
+
 ## Stage naming
 
 [`prompt-pipeline.md`](./prompt-pipeline.md) owns `Step 0 (Interpret)` and `Phase 2 (Reduce)` for different concepts, so this protocol uses **named stages only** — no `Phase N` labels. When you need the scope-reduction step, cite `prompt-pipeline` Phase 2 explicitly.
@@ -50,6 +58,7 @@ Where a rule legitimately appears in two files, the split is exactly the procedu
 
 - [`prompt-pipeline.md`](./prompt-pipeline.md) — Step 0 (Interpret) and Phase 2 (Reduce).
 - [`session-recovery.md`](./session-recovery.md) — resume flow when a session dies mid-stage.
+- **`executionUncertain` / no blind replay** — see `## Outcome feedback (bounded)` and [`session-recovery.md`](./session-recovery.md); an interrupted step is never replayed blindly.
 - `agents/orchestrator.md` — Project Context Source, Decision Hierarchy, Confidence Gate, Hard Limits, Rules, Handoff Protocol.
 
 ## Notes

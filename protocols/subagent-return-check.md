@@ -40,6 +40,7 @@ Resolve agent-system assets against the injected `agent-system` reference.
    findings. Do not claim a command ran when it did not.
 
 Shape success does not establish semantic correctness or trustworthy confidence.
+**Receipt ≠ completion:** shape success — and even a valid return — is a receipt that the child *answered*, not proof that the work was done. Require verification evidence (a file read, a command run, or a criterion demonstrably met) before recording `completed`; otherwise record it as completed-unverified.
 The Confidence Gate's existing single consistency probe is separate from schema
 repair: record it separately, do not reset the original child's repair budget,
 and do not use either mechanism to evade the other's cap or escalation rule.

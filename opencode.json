@@ -73,9 +73,9 @@
     "interpreter":  { "model": "opencode-go/deepseek-v4.1-flash" },
     "documenter":   { "model": "opencode-go/deepseek-v4.1-flash" },
     "analista":     { "model": "opencode-go/deepseek-v4.1-flash" },
-    "orchestrator": { "model": "opencode-go/minimax-m3.1-flash-free" },
-    "tester":       { "model": "opencode-go/qwen3.8-flash" },
-    "reviewer":     { "model": "opencode-go/mimo-v2.6-flash" }
+    "orchestrator": { "model": "opencode-go/deepseek-v4.1-flash" },
+    "tester":       { "model": "opencode-go/deepseek-v4.1-flash" },
+    "reviewer":     { "model": "opencode-go/deepseek-v4.1-flash" }
   },
   "experimental": {
     "subagent_depth": 4

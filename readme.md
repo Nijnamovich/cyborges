@@ -104,7 +104,7 @@ dispatch rules — is the authoritative table in `agents/orchestrator.md` →
 | `documenter` | Writes/maintains `docs/`. Returns `DocumenterOutput`. |
 
 Each agent's model is set **manually by the operator** at `opencode.json` →
-`agents.<id>.model` — an entry per configured agent id. Changing a model =
+`agents.<id>.model` — one entry per agent that pins a model. Changing a model =
 editing that entry and restarting opencode. A `model:` in an agent's frontmatter
 (`agents/<id>.md`) remains an optional override; a seat with no model configured
 — neither in `opencode.json` nor in its frontmatter — inherits the model of the
@@ -135,6 +135,11 @@ The protocols live in `protocols/`:
   hierarchy.
 - [`broad-investigation-template.md`](./protocols/broad-investigation-template.md) —
   5-section scaffold for prompts that map, inventory, or audit the repo.
+- [`agent-memory.md`](./protocols/agent-memory.md) — optional, default-off memory
+  contract (semantic + episodic tiers); a contract only, no writer.
+- [`security-review.md`](./protocols/security-review.md) — stack-neutral security
+  review: boundary gate, verdicts, severity anchors, and a coverage ledger;
+  source-read-only.
 
 ## Coding standards
 
@@ -268,6 +273,15 @@ on stdout without raw child data. No schema references or unsupported assertions
 are silently accepted. The shared protocol owns manual fallback, truthful reporting,
 the one-repair-per-child cap, and STUCK/NEEDS_HUMAN routing. Shape validity is not
 semantic approval or a Confidence Gate result; no automatic runtime gate is added.
+
+## Releases
+
+Releases are **git tags** on this clone — there is no package manager and no publish step.
+
+- **Identify the current state:** `git describe --tags --always --dirty`. A bare tag name means you are exactly on a release; a `-<n>-g<sha>` suffix means you are ahead of it; `-dirty` means uncommitted changes.
+- **Update:** `git pull` in the clone, then `bash scripts/validate-agent.sh` (exit 0 required).
+- **Roll back:** `git checkout <tag>` (e.g. `v1.0.0`) to return the clone to a known validated state.
+- **Propagation:** `protocols/` and `code-lang/` edits are plain markdown read on demand, so they apply on the **next read**; `agents/*.md` are runtime-loaded agent definitions, and `opencode.json` changes (including `agents.<id>.model`) require a new session or an opencode **restart**.
 
 ## Troubleshooting
 

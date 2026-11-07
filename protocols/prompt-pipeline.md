@@ -44,7 +44,42 @@ The `delivery` agent invokes the `interpreter` subagent with the raw prompt. The
 5. Optionally calls the `question` tool ONCE, with a batch of all blocking questions, if the route would materially change based on the answer.
 6. Returns a compact routing packet written entirely in English (see [`interpreter.md`](../agents/interpreter.md) for the full shape).
 
+> **Optional memory read (default off).** Only if `delivery` (at Step 0) has confirmed the memory directory exists, the interpreter MAY read it as stale, untrusted background per [`agent-memory.md`](./agent-memory.md) — never as an override for `docs/project.md`.
+
 The full process and the routing packet schema are defined in [`agents/interpreter.md`](../agents/interpreter.md). Do not duplicate it here.
+
+## Reflex checks (after Step 0)
+
+Deterministic preconditions applied to the routing packet **after** Step 0 returns it, before Phase 2 begins. They never run before Step 0 and never replace it: the interpreter is still the first invocation of every turn, and [`dispatch.md`](./dispatch.md) is unchanged. **Delivery applies them to every packet, trivial routes included, before handling or handing off; the orchestrator re-checks the packet it receives before Phase 2.**
+
+Apply all of them, in order:
+
+1. **Mandatory lookups before resolving.** Every term the packet claims to resolve must cite a concrete `grep`/`glob` result; a resolution without a lookup is not a resolution. If the lookup was not run, run it now or move the term to `unresolved_questions`.
+2. **At most one question round.** The interpreter asks the human at most once, batched (`clarification_needed` / `blocking_questions`). A reflex check must not open a second round; anything still ambiguous becomes a documented assumption or a `NEEDS_HUMAN` stopping point.
+3. **English-only subagent output.** The packet and every subagent return are in English regardless of the human's language. A non-English packet is a defect, not a style preference.
+4. **The interpreter never edits.** Step 0 is read-only. A packet that reports edits, or an interpreter turn that touched the tree, is invalid — re-run Step 0.
+5. **Contradictory packet → NEEDS_HUMAN.** If the packet contradicts itself (e.g. `clarification_needed: no` with non-empty `blocking_questions`, `clarification_needed: yes` with an empty list, or a `modules` entry that no `resolved_by_lookup` or `docs/project.md` slice supports), stop and surface the contradiction instead of silently picking a side.
+
+Passing the reflex checks does not approve the route; it only makes the packet admissible to Phase 2.
+
+## Routing classes (advisory)
+
+The interpreter's closed enums are a **pre-selection** signal, not a decision. They suggest which existing seat will most likely own the work; Phase 2 still decides the scope and the orchestrator still picks the seat. No new seat is introduced and no schema changes.
+
+| `type` | Typical first seat | Advisory note |
+|---|---|---|
+| `bug` | `explorer` then `coder` (language=angular\|go\|css) | Locate the defect before editing; `tester` reproduces it when a suite exists. |
+| `task` | `coder` (language=angular\|go\|css) | Direct implementation; escalate to `architect` only if boundaries move. |
+| `feature-design` | `architect` | Design before code; `coder` follows the approved boundaries. |
+| `update` | `coder` (language=css\|angular) or `documenter` | Configuration, docs, standards, and styling updates. |
+
+`confidence` qualifies the pre-selection, never overrides it:
+
+- `high` — the suggested seat is a reasonable starting point; Phase 2 confirms.
+- `medium` — read the packet's `unresolved_questions` and `hidden_assumption` before committing; the seat may still change.
+- `low` — treat the pre-selection as unknown; do not skip Phase 2 because a class was named.
+
+The table maps only onto **existing** seats. It never bypasses the interpreter-first gate, never adds a Step/Phase label, and never changes `agents/interpreter.schema.json`.
 
 ## Phase 2: Reduce
 
