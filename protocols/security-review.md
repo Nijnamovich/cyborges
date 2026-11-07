@@ -1,6 +1,5 @@
 # Protocol: Security Review
 
-> Attribution: procedural inspiration from Cloudflare's security-review skill (MIT; no code copied), boundary/severity discipline informed by QwenLM/Qwen-Live-Harness (Apache-2.0; prose disciplines only), minimalism ideas from IagoLast/files (no text copied). See `## Credits` in `readme.md`.
 ## 1. Scope and mode
 Security review is **guidance by default** and a **full audit only on an explicit human or project request**. The mode is a recorded OUTPUT of Phase 2 (Reduce) — never a new classification step at turn entry. The interpreter-first gate and the "never classify before Step 0" rule are unchanged; a full audit is a checklist scope, not a different pipeline.
 ## 2. Non-negotiables
