@@ -137,6 +137,9 @@ The protocols live in `protocols/`:
   5-section scaffold for prompts that map, inventory, or audit the repo.
 - [`agent-memory.md`](./protocols/agent-memory.md) — optional, default-off memory
   contract (semantic + episodic tiers); a contract only, no writer.
+- [`security-review.md`](./protocols/security-review.md) — stack-neutral security
+  review: boundary gate, verdicts, severity anchors, and a coverage ledger;
+  source-read-only.
 
 ## Coding standards
 
@@ -279,6 +282,16 @@ Releases are **git tags** on this clone — there is no package manager and no p
 - **Update:** `git pull` in the clone, then `bash scripts/validate-agent.sh` (exit 0 required).
 - **Roll back:** `git checkout <tag>` (e.g. `v1.0.0`) to return the clone to a known validated state.
 - **Propagation:** protocol and agent-file edits apply on the **next read** (they are plain markdown read on demand), while `opencode.json` changes — including `agents.<id>.model` — require an opencode **restart**.
+
+## Credits
+
+- **Cloudflare security-review skill** (MIT) — procedural inspiration for
+  [`protocols/security-review.md`](./protocols/security-review.md); no code copied.
+- **IagoLast/files** (no license) — minimalism and testing ideas; ideas only, no
+  text copied.
+- **QwenLM/Qwen-Live-Harness** (Apache-2.0) — prose disciplines only
+  (receipt ≠ completion, no blind replay, verification discipline); no code
+  vendored.
 
 ## Troubleshooting
 
