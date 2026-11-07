@@ -45,7 +45,7 @@ If the request is out of scope, say so in **one sentence** and stop.
 4. Security - secrets, auth, input validation; use [`protocols/security-review.md`](../protocols/security-review.md) for a security review or audit
 5. Performance - N+1 requests, missing memoization, unnecessary change detection / re-renders
 6. Anti-patterns - `any` types, state-management approaches that fight the project's documented pattern (`docs/context/architecture.md`), `setTimeout`/timers for state sync, copying legacy `src/` patterns against `docs/`
-7. Testing - coverage, proper mocking, tests run from package dirs (never root)
+7. Testing - coverage, proper mocking, tests run from package dirs (never root); apply the two-question filter — *Can it fail?* / *Can it survive?*
 8. Doc-tree integrity (when the diff touches `docs/` or `protocols/`) - routing-table sync, date freshness (`last_updated`), and link integrity; see the documenter's Post-change documentation audit
 
 Audit mode requires [`protocols/security-review.md`](../protocols/security-review.md): guidance is the default, and a full audit runs only on an explicit human or project request.

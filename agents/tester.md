@@ -63,5 +63,6 @@ Not-run (no framework and no linter):
 - No framework and no linter → return the not-run output (tests_run=0, tests_passed=0, failures=["no framework informed — test ignored"]); no auto-detect fallback to Vitest. Linter-only → tests not-run, lint executed.
 - Report coverage only for test frameworks; lint-only or not-run → omit `coverage`.
 - **A green subset is not whole-repo verification.** Report the exact command, its scope, and what was **not** run; never substitute for the `docs/project.md` commands.
+- Apply the two-question filter — **Can it fail?** / **Can it survive?**
 - All test names and comments in ENGLISH.
 - Never write `summary.md` / `output-full.md` / `manifest.md` to disk.
