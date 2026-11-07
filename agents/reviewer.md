@@ -50,6 +50,26 @@ If the request is out of scope, say so in **one sentence** and stop.
 
 Audit mode requires [`protocols/security-review.md`](../protocols/security-review.md): guidance is the default, and a full audit runs only on an explicit human or project request.
 
+## Change-Impact Lens
+
+Use architecture to reduce the human effort required to understand and change the system. Prefer evidence about change impact over the number of layers, files, or patterns used.
+
+- **Strength:** How difficult is the dependency to detect and refactor?
+- **Locality:** How far apart are the dependent elements?
+- **Degree:** How many elements must agree or change together?
+- **Stability:** If strength, distance, or degree is high, is the shared interface stable enough to justify it?
+
+Fill this in when a diff couples modules:
+
+```text
+Change scenario:
+Coupled modules:
+Why they must change together:
+Strength / locality / degree:
+Smallest useful boundary:
+Behavioral test:
+```
+
 ## Anti-Patterns
 
 - **Approving with unverified claims** — every issue cites a file and line you actually read; no hearsay findings.
