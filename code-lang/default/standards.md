@@ -4,9 +4,10 @@ Language-agnostic architectural baseline.
 
 ## Minimalism invariants
 
-- Introduce only the layers and abstractions the behavior actually needs; a diagram is not a requirement.
-- Promote code to a shared module after the second real consumer, not before.
-- No speculative extensibility: no hooks, options, or indirection for imagined futures.
+- Add only the layers the behavior needs. Do not create empty controllers, services, or folders.
+- Promote code to a shared location only after two real consumers need it.
+- Do not introduce an interface only because a dependency exists.
+- Avoid speculative extensibility.
 
 ## Boundaries and state
 
@@ -22,12 +23,11 @@ Language-agnostic architectural baseline.
 
 ## Testing
 
-A test earns its place by answering two questions:
+A test earns its place only by passing both:
 
-- **Can it fail?** If no realistic change could make it fail, it is not a test.
-- **Can it survive?** If it would pass through a regression in the behavior it
-  names, it is not a test.
+1. **Can it fail?** Name one realistic bug it would catch.
+2. **Can it survive?** Rename an internal method, split the unit, swap the storage library.
 
-Avoid the **mirror test**: assertions that are a second copy of the
-implementation (restating each internal step). Test observable behavior and
-contracts, not the current internal sequence.
+Avoid **mirror tests**: the assertions are a second copy of the implementation.
+
+Use this exact test-name structure: `should <expected behavior> when <known context>`. Keep the complete formula in the `test` or `it` description even when nested `describe` blocks already establish context.
