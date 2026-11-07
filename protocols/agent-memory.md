@@ -27,7 +27,10 @@ ${XDG_STATE_HOME:-$HOME/.local/state}/opencode/agent-memory/
   configuration, and must never be committed.
 - Suggested layout: `semantic/` and `episodic/`. The layout is a convention;
   consumers key on the tier field, not on the directory name.
-- Existence is checked at read time with the shell. There is no config key.
+- A **shell-capable consumer** (`delivery` or `orchestrator`) resolves the
+  absolute path and checks existence at read time. The `read` tool does not
+  expand `~` or `${...}`, and the interpreter has `bash: deny`, so it may read
+  only an already-absolute path handed to it. There is no config key.
 
 ## Tiers
 
@@ -93,8 +96,9 @@ one is not.
 
 ## Reading (consumer side)
 
-- Optional and bounded: read only when the directory exists, and only for the
-  current repo and scope.
+- Optional and bounded: a shell-capable consumer resolves the absolute path,
+  confirms the directory exists, and only then may hand it to a reader (e.g. the
+  interpreter). Read only for the current repo and scope.
 - One bounded read; do not crawl the store recursively.
 - Writing is out of scope for this protocol — no writer ships.
 

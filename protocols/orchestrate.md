@@ -36,7 +36,7 @@ These are the orchestrator's own thinking stages. `prompt-pipeline` Step 0 (Inte
 
 Closes the loop on stage 5 (Verification): when a return does not meet its verification path, the orchestrator may re-iterate **once** — never in an open-ended retry loop.
 
-- **At most one bounded re-iteration.** Re-release the child with the concrete gap and the evidence it must produce. If the second return still misses, stop and report the gap as `NEEDS_HUMAN` or `STUCK`; do not launch a third attempt.
+- **At most one bounded re-iteration.** Re-release the child with the concrete gap and the evidence it must produce, labeled `verification-retry` — the launch-dedup carve-out. If the second return still misses, stop and report the gap as `NEEDS_HUMAN` or `STUCK`; do not launch a third attempt.
 - **Receipt ≠ completion.** A child return is a *receipt* that the child answered — not proof that the work was done. `completed` requires verification evidence: a file read showing the change, a command run showing the result, or a criterion demonstrably met. Without that evidence, record the outcome as **completed-unverified** and say so in the snapshot.
 - **executionUncertain.** A timeout or a lost acknowledgement does not prove the child stopped executing. Treat the step's apply-state as unknown, inspect the diff and todo before re-dispatching, and never blindly replay writes, commands, or approvals.
 

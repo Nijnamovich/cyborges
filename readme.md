@@ -104,7 +104,7 @@ dispatch rules — is the authoritative table in `agents/orchestrator.md` →
 | `documenter` | Writes/maintains `docs/`. Returns `DocumenterOutput`. |
 
 Each agent's model is set **manually by the operator** at `opencode.json` →
-`agents.<id>.model` — an entry per configured agent id. Changing a model =
+`agents.<id>.model` — one entry per agent that pins a model. Changing a model =
 editing that entry and restarting opencode. A `model:` in an agent's frontmatter
 (`agents/<id>.md`) remains an optional override; a seat with no model configured
 — neither in `opencode.json` nor in its frontmatter — inherits the model of the
@@ -281,7 +281,7 @@ Releases are **git tags** on this clone — there is no package manager and no p
 - **Identify the current state:** `git describe --tags --always --dirty`. A bare tag name means you are exactly on a release; a `-<n>-g<sha>` suffix means you are ahead of it; `-dirty` means uncommitted changes.
 - **Update:** `git pull` in the clone, then `bash scripts/validate-agent.sh` (exit 0 required).
 - **Roll back:** `git checkout <tag>` (e.g. `v1.0.0`) to return the clone to a known validated state.
-- **Propagation:** protocol and agent-file edits apply on the **next read** (they are plain markdown read on demand), while `opencode.json` changes — including `agents.<id>.model` — require an opencode **restart**.
+- **Propagation:** `protocols/` and `code-lang/` edits are plain markdown read on demand, so they apply on the **next read**; `agents/*.md` are runtime-loaded agent definitions, and `opencode.json` changes (including `agents.<id>.model`) require a new session or an opencode **restart**.
 
 ## Credits
 

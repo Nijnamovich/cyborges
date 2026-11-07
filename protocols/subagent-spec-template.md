@@ -121,7 +121,7 @@ Rules for thin variants:
 
 ## `opencode.json` — top-level runtime + the per-agent model map
 
-`opencode.json` carries **top-level runtime config**: `$schema`, `default_agent`, `permissions` (global), `references`, `compaction`, `experimental`, `mcp`, `model` (the default/inherited model), and `agents` — the operator-owned **per-agent model map**, one `agents.<id>.model` entry per configured agent id. That is the only per-agent field that lives in `opencode.json`; every other per-agent field (`description`, `mode`, `permission`, `output_schema`) lives in the agent's `.md` frontmatter.
+`opencode.json` carries **top-level runtime config**: `$schema`, `default_agent`, `permissions` (global), `references`, `compaction`, `experimental`, `mcp`, `model` (the default/inherited model), and `agents` — the operator-owned **per-agent model map**, one `agents.<id>.model` entry per agent that pins a model. That is the only per-agent field that lives in `opencode.json`; every other per-agent field (`description`, `mode`, `permission`, `output_schema`) lives in the agent's `.md` frontmatter.
 
 | Field | Home |
 |---|---|

@@ -81,7 +81,7 @@ or assess the exact schema manually. No scratch return files and no fabricated v
 - "Need project context" -> read `docs/project.md` + `docs/context/` directly (delegate coordinated doc maintenance to `documenter`).
 - "Image attached and I need to describe / OCR / read it" -> delegate to `interpreter` (one image, one focused question).
 
-**Model configuration:** each agent's model is set manually by the operator at `opencode.json` → `agents.<id>.model` (an entry per configured agent id); the top-level `model` is the default/inherited model. A `model:` in the agent's frontmatter (`agents/<id>.md`) remains an optional override, and a seat with no model configured — neither in `opencode.json` nor in its frontmatter — inherits the invoking primary agent's model (per `validate-agent.sh` and `subagent-spec-template.md`). The orchestrator does not override a model at dispatch time; an explicit model supplied in the handoff wins. To change a model, edit `opencode.json` and restart opencode.
+**Model configuration:** each agent's model is set manually by the operator at `opencode.json` → `agents.<id>.model` (one entry per agent that pins a model); the top-level `model` is the default/inherited model. A `model:` in the agent's frontmatter (`agents/<id>.md`) remains an optional override, and a seat with no model configured — neither in `opencode.json` nor in its frontmatter — inherits the invoking primary agent's model (per `validate-agent.sh` and `subagent-spec-template.md`). The orchestrator does not override a model at dispatch time; an explicit model supplied in the handoff wins. To change a model, edit `opencode.json` and restart opencode.
 
 ## Agent-system changes require review
 
