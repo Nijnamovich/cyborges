@@ -135,6 +135,8 @@ The protocols live in `protocols/`:
   hierarchy.
 - [`broad-investigation-template.md`](./protocols/broad-investigation-template.md) —
   5-section scaffold for prompts that map, inventory, or audit the repo.
+- [`agent-memory.md`](./protocols/agent-memory.md) — optional, default-off memory
+  contract (semantic + episodic tiers); a contract only, no writer.
 
 ## Coding standards
 
