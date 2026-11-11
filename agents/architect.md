@@ -3,6 +3,14 @@ description: Architect subagent - System design, architecture, module boundaries
 mode: subagent
 permission:
   edit: deny
+  bash: deny
+  webfetch: deny
+  websearch: deny
+  question: deny
+  skill: deny
+  task: deny
+  execute: deny
+  browser: deny
 output_schema: ./architect.schema.json
 ---
 

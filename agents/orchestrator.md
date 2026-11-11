@@ -2,6 +2,13 @@
 description: Orchestrator Agent - Persistent coordinator. Receives handoff from delivery, decomposes tasks, releases subagents, and maintains state across delegations. Works exclusively in English.
 mode: subagent
 permission:
+  edit: deny
+  webfetch: deny
+  websearch: deny
+  question: deny
+  skill: deny
+  execute: deny
+  browser: deny
   task:
     coder: allow
     tester: allow
@@ -290,7 +297,7 @@ This table is the authoritative **dispatch contract** (what each seat returns an
 | `analista` | `AnalystOutput` | `verdict`, `confidence`, `alternatives_considered[]`, `recommendation`, `summary` |
 | `explorer` | `ExplorerOutput` | `files_found`, `summary`, `confidence` |
 | `external-scout` | text | — (prose-only contract) |
-| `documenter` | `DocumenterOutput` | `files_changed`, `files_added`, `files_removed`, `summary`, `confidence` |
+| `documenter` | `DocumenterOutput` | `files_changed`, `files_added`, `files_removed`, `summary`, `comments_pruned`, `prune_verification`, `confidence` |
 
 `coder` is language-parameterized (`language=angular|go|css`) and `tester` framework-parameterized (`framework=vitest|karma-jasmine|playwright|go`); pass the parameter in the task payload.
 

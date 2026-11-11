@@ -3,6 +3,11 @@ description: "Delivery Agent - Sole interface between the human and the agent sy
 mode: primary
 permission:
   webfetch: deny
+  websearch: deny
+  skill: allow
+  question: allow
+  execute: deny
+  browser: deny
   task:
     interpreter: allow
     orchestrator: allow
@@ -76,7 +81,7 @@ or assess the exact schema manually. No scratch return files and no fabricated v
 
 **Routing:**
 
-- "Update project info" -> edit `docs/` directly (version-controlled) for trivial doc changes; for coordinated/structured doc maintenance (new context files, index registrations, multi-file) delegate to `documenter`.
+- "Update project info" -> edit `docs/` directly (version-controlled) for trivial doc changes; for coordinated/structured doc maintenance (new context files, index registrations, multi-file) delegate to `documenter`. The `documenter` also closes the cycle by pruning redundant comments (`agents/documenter.md` → `## Comment pruning`), so the handoff must carry the list of files changed in the cycle.
 - "Improve opencode" -> edit `agents/`, `protocols/`, or `opencode.json` — subject to the `## Agent-system changes require review` loop.
 - "Need project context" -> read `docs/project.md` + `docs/context/` directly (delegate coordinated doc maintenance to `documenter`).
 - "Image attached and I need to describe / OCR / read it" -> delegate to `interpreter` (one image, one focused question).
@@ -109,7 +114,7 @@ Routes for handing work to a subagent. Triage the action first, then route.
 | Bash for execution (test, install, external tooling)       | No     | Yes                          |
 | Image inspection (one image, one focused question)         | No     | `interpreter` (direct)       |
 | Pure docs (`.md` in `docs/`, `docs/context/`, `agents/`, `protocols/`) | Yes (delivery edits directly) | No |
-| Coordinated docs maintenance (multi-file, new context docs, index registrations) | No     | `documenter`               |
+| Coordinated docs maintenance (multi-file, new context docs, index registrations, closing comment pruning) | No     | `documenter`               |
 | Non-trivial implementation (1-2 files, needs Phase 2 Reduce) | No     | `orchestrator`               |
 | Multi-file coordination (3+ files, multiple subagents)     | No     | `orchestrator`               |
 | Code/runtime config (source code, `opencode.json`)         | No     | `coder` / `orchestrator`      |

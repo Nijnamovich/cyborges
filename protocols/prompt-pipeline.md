@@ -71,7 +71,7 @@ The interpreter's closed enums are a **pre-selection** signal, not a decision. T
 | `bug` | `explorer` then `coder` (language=angular\|go\|css) | Locate the defect before editing; `tester` reproduces it when a suite exists. |
 | `task` | `coder` (language=angular\|go\|css) | Direct implementation; escalate to `architect` only if boundaries move. |
 | `feature-design` | `architect` | Design before code; `coder` follows the approved boundaries. |
-| `update` | `coder` (language=css\|angular) or `documenter` | Configuration, docs, standards, and styling updates. |
+| `update` | `documenter` (docs/prose) or `coder` (language=css\|angular) | Docs and prose → `documenter`; configuration, standards (`code-lang/`), and styling → `coder`. |
 
 `confidence` qualifies the pre-selection, never overrides it:
 

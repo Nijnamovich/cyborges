@@ -45,6 +45,7 @@
 #       workflows/ directory are ERRORs.
 #   14. stdlib child-return checker unit tests pass.
 #   15. schema-agent Structured Return JSON examples pass the checker.
+#   16. agent contract tests: documenter comment pruning + per-seat tool posture.
 #
 # Exit code: 0 = OK (warnings allowed), 1 = one or more ERRORs.
 # Pure bash + Python 3 (PYTHON override, otherwise python3 then python).
@@ -102,7 +103,7 @@ frontmatter() {
 
 # --- 1. config JSON validity -------------------------------------------------
 
-echo "== [1/15] config JSON =="
+echo "== [1/16] config JSON =="
 if ! have_python; then
   err "selected Python interpreter unavailable; cannot validate config JSON"
   exit 1
@@ -119,7 +120,7 @@ fi
 # agents.<id>.model. A frontmatter `model:` is an OPTIONAL per-agent override.
 # The only hard frontmatter error here is the deprecated `tools:` field.
 
-echo "== [2/15] flat agents/ layout + frontmatter (tools: check) =="
+echo "== [2/16] flat agents/ layout + frontmatter (tools: check) =="
 if [ -d "${ROOT}/agents/subagents" ]; then
   err "legacy agents/subagents/ layout found; agents must be flat under agents/"
 fi
@@ -152,7 +153,7 @@ fi
 # several of these were present in earlier revisions). Do NOT delete a branch
 # just because it is currently dormant.
 
-echo "== [3/15] unsupported / forbidden config fields =="
+echo "== [3/16] unsupported / forbidden config fields =="
 if ! have_python; then
   err "selected Python interpreter unavailable; cannot check config fields"
   exit 1
@@ -229,7 +230,7 @@ fi
 
 # --- 4. ambient AGENTS.md ----------------------------------------------------
 
-echo "== [4/15] ambient AGENTS.md =="
+echo "== [4/16] ambient AGENTS.md =="
 AMBIENT_HITS=0
 while IFS= read -r f; do
   [ -n "${f}" ] || continue
@@ -244,7 +245,7 @@ fi
 
 # --- 5. secret scan ----------------------------------------------------------
 
-echo "== [5/15] Git index secret filename scan =="
+echo "== [5/16] Git index secret filename scan =="
 SECRET_HITS=0
 if ! git -C "${ROOT}" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   err "Git index unavailable: secret filename scan requires a Git working tree"
@@ -272,7 +273,7 @@ fi
 
 # --- 6. output_schema resolution ---------------------------------------------
 
-echo "== [6/15] output_schema files =="
+echo "== [6/16] output_schema files =="
 for md in "${AGENTS_DIR}"/*.md; do
   [ -f "${md}" ] || continue
   schema="$(frontmatter "${md}" | awk -F': *' '/^output_schema:/{gsub(/ /,"",$2); print $2; exit}')"
@@ -288,7 +289,7 @@ done
 
 # --- 7. permission.task targets (fail-closed) --------------------------------
 
-echo "== [7/15] permission.task targets =="
+echo "== [7/16] permission.task targets =="
 if ! have_python; then
   err "selected Python interpreter unavailable; cannot check permission.task"
   exit 1
@@ -453,7 +454,7 @@ fi
 
 # --- 8. required frontmatter -------------------------------------------------
 
-echo "== [8/15] required frontmatter =="
+echo "== [8/16] required frontmatter =="
 for md in "${AGENTS_DIR}"/*.md; do
   [ -f "${md}" ] || continue
   name="$(basename "${md}")"
@@ -475,7 +476,7 @@ echo "ok: frontmatter scanned"
 
 # --- 9. references paths -----------------------------------------------------
 
-echo "== [9/15] config references paths =="
+echo "== [9/16] config references paths =="
 if have_python; then
   PY_OUT="$("${PYTHON_BIN}" - "${CONFIG}" "${ROOT}" <<'PY'
 import json, os, sys
@@ -509,7 +510,7 @@ fi
 
 # --- 10. schema JSON files ---------------------------------------------------
 
-echo "== [10/15] schema JSON files =="
+echo "== [10/16] schema JSON files =="
 if ! have_python; then
   err "selected Python interpreter unavailable; cannot validate schema JSON"
   exit 1
@@ -527,7 +528,7 @@ fi
 
 # --- 11. schema structural closure -------------------------------------------
 
-echo "== [11/15] schema structural closure =="
+echo "== [11/16] schema structural closure =="
 if ! have_python; then
   err "selected Python interpreter unavailable; cannot check schema closure"
   exit 1
@@ -594,7 +595,7 @@ fi
 
 # --- 12. schema enum agent targets resolve -----------------------------------
 
-echo "== [12/15] schema enum agent targets resolve =="
+echo "== [12/16] schema enum agent targets resolve =="
 if ! have_python; then
   err "selected Python interpreter unavailable; cannot check schema enum targets"
   exit 1
@@ -660,7 +661,7 @@ fi
 
 # --- 13. dangling markdown refs ----------------------------------------------
 
-echo "== [13/15] dangling refs =="
+echo "== [13/16] dangling refs =="
 if ! have_python; then
   err "selected Python interpreter unavailable; cannot check dangling references"
   exit 1
@@ -787,16 +788,23 @@ fi
 
 # --- 14. return checker unit tests --------------------------------------------
 
-echo "== [14/15] child-return checker unit tests =="
+echo "== [14/16] child-return checker unit tests =="
 if ! "${PYTHON_BIN}" -B "${SCRIPT_DIR}/test_check_subagent_return.py"; then
   err "child-return checker unit tests failed"
 fi
 
 # --- 15. schema-agent return examples -----------------------------------------
 
-echo "== [15/15] Structured Return JSON examples =="
+echo "== [15/16] Structured Return JSON examples =="
 if ! "${PYTHON_BIN}" -B "${SCRIPT_DIR}/check-subagent-return.py" --check-examples; then
   err "schema-agent Structured Return examples could not be verified"
+fi
+
+# --- 16. agent contract tests ------------------------------------------------
+
+echo "== [16/16] agent contract tests =="
+if ! "${PYTHON_BIN}" -B "${SCRIPT_DIR}/test_agent_contracts.py"; then
+  err "agent contract tests failed (documenter comment pruning or per-seat tool posture drifted)"
 fi
 
 # --- summary -----------------------------------------------------------------
