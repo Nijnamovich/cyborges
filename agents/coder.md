@@ -1,6 +1,14 @@
 ---
 description: Coder - language-parameterized implementation for Angular SPA, Go backend, and CSS styling. Thin adapter branching by language template (angular|go|css) via task payload, reusing coder.schema.json CoderOutput.
 mode: subagent
+permission:
+  webfetch: deny
+  websearch: deny
+  question: deny
+  skill: deny
+  task: deny
+  execute: allow
+  browser: allow
 output_schema: ./coder.schema.json
 ---
 

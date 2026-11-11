@@ -41,6 +41,31 @@
       "minimum": 0,
       "maximum": 1,
       "description": "Calibrated confidence in this return (0 = no confidence, 1 = certain)."
+    },
+    "comments_pruned": {
+      "type": "array",
+      "description": "Source files whose comments were pruned by the terminal comment-pruning step.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string",
+            "description": "Path of the source file whose comment text was removed or rewritten."
+          },
+          "removed": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of comment blocks removed or rewritten in that file."
+          }
+        },
+        "required": ["file", "removed"],
+        "additionalProperties": false
+      }
+    },
+    "prune_verification": {
+      "type": "string",
+      "enum": ["verified", "reverted", "not_required", "blocked"],
+      "description": "Outcome of the comment-only self-check over the pruning diff."
     }
   },
   "required": ["files_changed", "files_added", "files_removed", "summary", "confidence"],

@@ -4,7 +4,13 @@ mode: subagent
 permission:
   edit: deny
   bash: deny
+  webfetch: deny
+  websearch: deny
+  question: deny
+  skill: deny
   task: deny
+  execute: deny
+  browser: deny
 output_schema: ./analista.schema.json
 ---
 

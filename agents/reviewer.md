@@ -3,6 +3,12 @@ description: Reviewer subagent - Code review, security audit, best practices, pe
 mode: subagent
 permission:
   edit: deny
+  webfetch: deny
+  websearch: deny
+  question: deny
+  skill: deny
+  execute: deny
+  browser: deny
   task:
     reviewer: allow
 output_schema: ./reviewer.schema.json

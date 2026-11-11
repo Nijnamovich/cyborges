@@ -3,6 +3,13 @@ description: Tester - framework-parameterized test execution for vitest, karma-j
 mode: subagent
 permission:
   edit: deny
+  webfetch: deny
+  websearch: deny
+  question: deny
+  skill: deny
+  task: deny
+  execute: allow
+  browser: allow
 output_schema: ./tester.schema.json
 ---
 

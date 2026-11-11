@@ -3,7 +3,13 @@ description: Explorer subagent - Codebase exploration, file search, dependency a
 mode: subagent
 permission:
   edit: deny
+  bash: deny
   webfetch: deny
+  websearch: deny
+  question: deny
+  skill: deny
+  execute: deny
+  browser: deny
   task:
     explorer: allow
 output_schema: ./explorer.schema.json

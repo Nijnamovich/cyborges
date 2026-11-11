@@ -4,8 +4,13 @@ mode: subagent
 permission:
   edit: deny
   bash: deny
-  read: allow
+  webfetch: deny
+  websearch: deny
+  question: allow
+  skill: deny
   task: deny
+  execute: deny
+  browser: deny
 output_schema: ./interpreter.schema.json
 ---
 

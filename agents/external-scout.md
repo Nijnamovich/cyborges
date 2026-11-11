@@ -4,7 +4,16 @@ mode: subagent
 permission:
   edit: deny
   bash: deny
+  glob: deny
+  grep: deny
+  list: deny
   webfetch: allow
+  websearch: allow
+  question: deny
+  skill: deny
+  task: deny
+  execute: deny
+  browser: deny
 ---
 
 # External Scout Subagent

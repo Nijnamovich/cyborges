@@ -30,7 +30,7 @@ These are the orchestrator's own thinking stages. `prompt-pipeline` Step 0 (Inte
 3. **Proposal** — produce the scope defined by `prompt-pipeline` Phase 2 (Reduce). **This *is* Phase 2**, and the orchestrator is its sole executor; the fields and rules live in that protocol — read them there rather than re-deriving them. The human-facing proposal is delivered through `delivery`, never directly.
 4. **Implementation** — write code following the project's standards, through the appropriate subagents.
 5. **Verification** — run the canonical commands from `docs/project.md` for the affected package directory (the `do-not-run-tests-from-root` guard, thinking rule 6).
-6. **Documentation** — update the relevant docs in the project's `doc_language` (thinking rule 5; English for agent-system files).
+6. **Documentation** — update the relevant docs in the project's `doc_language` (thinking rule 5; English for agent-system files). The `documenter` is the cycle's terminus: docs persisted → sync audit → comment pruning. A cycle is not closed while comments the docs have made redundant still sit in the code; the pruning contract — keep-list, knowledge-first rule, comment-only invariant, and the `verified | reverted | not_required | blocked` status — is owned by `agents/documenter.md` → `## Comment pruning`. The handoff carries the list of files changed in this cycle as the pruning scope; without it the documenter must report `blocked`.
 
 ## Outcome feedback (bounded)
 

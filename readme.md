@@ -62,7 +62,7 @@ path. The read tool does not expand `~`.
 │   ├── external-scout.md        # External docs via webfetch
 │   ├── interpreter.md           # Step 0 normalization + image inspection
 │   ├── analista.md              # Second opinion
-│   ├── documenter.md            # Documentation
+│   ├── documenter.md            # Documentation + comment pruning
 │   └── *.schema.json            # Structured-return schemas
 │
 ├── protocols/                   # Agent operating conventions (read on demand)
@@ -101,7 +101,7 @@ dispatch rules — is the authoritative table in `agents/orchestrator.md` →
 | `explorer` | Search and mapping in the repo. Returns `ExplorerOutput`. |
 | `external-scout` | Brings docs of external libraries via webfetch. |
 | `interpreter` | Normalizes the prompt (Step 0) and inspects a single image. |
-| `documenter` | Writes/maintains `docs/`. Returns `DocumenterOutput`. |
+| `documenter` | Writes/maintains `docs/`, then closes the cycle by pruning comments the docs made redundant. Returns `DocumenterOutput`. |
 
 Each agent's model is set **manually by the operator** at `opencode.json` →
 `agents.<id>.model` — one entry per agent that pins a model. Changing a model =
@@ -161,11 +161,14 @@ Standards live in `code-lang/` and are loaded on demand by
   `permissions` array of `{ action, resource, effect }`. Each agent also carries
   its own `permission:` block in its `.md` frontmatter. Valid V2 permission
   actions include `read`, `edit`, `glob`, `grep`, `list`, `bash`, `task`,
-  `webfetch`, `websearch`, `question`, `external_directory`, `lsp`, `skill`, and
-  `doom_loop`; `task` is the subagent-dispatch gate. `webfetch`/`websearch` are
-  first-class V2 actions — verified against the installed runtime — so
-  `external-scout`'s `webfetch: allow` and `delivery`'s `webfetch: deny` are
-  legitimate rules, not leftovers.
+  `webfetch`, `websearch`, `question`, `external_directory`, `lsp`, `skill`,
+  `execute`, `browser`, and `doom_loop`; `task` is the subagent-dispatch gate.
+  `webfetch`/`websearch` are first-class V2 actions — verified against the
+  installed runtime — so `external-scout`'s `webfetch: allow` and `delivery`'s
+  `webfetch: deny` are legitimate rules, not leftovers.
+  `execute` (Code Mode) and `browser` are the live V2 permissions reference's
+  names for those two tool families; re-verify them against the installed
+  runtime before relying on them as a hard boundary.
 - **Two permission vocabularies.** The top-level `permissions` array in
   `opencode.json` uses the runtime's action names verbatim — notably `shell` for
   shell execution (the shell tool asserts `action: "shell"`), `edit` for
@@ -198,6 +201,43 @@ Standards live in `code-lang/` and are loaded on demand by
   / `files_changed` / `subagent_outcomes` around the markdown report), defined in
   `agents/orchestrator.md` → `## Handoff Protocol`; the envelope is a convention,
   not an `output_schema`, so the prose-only statement still holds.
+
+### Per-seat tool posture
+
+Every seat's posture is explicit. The global `permissions` array is the base policy;
+an agent's frontmatter adds its own rules after the global ones (last matching rule
+wins), so a `deny` here restricts a seat and an `allow` only fills a gap the global
+array leaves (`no match → ask`). This table is authoritative for *which tool belongs
+to which seat*; the frontmatter is its enforceable subset.
+
+| Agent | read | edit | glob | grep | shell | webfetch | websearch | question | skill | subagent | execute | browser |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| `delivery` | allow | allow | allow | allow | allow | deny | deny | allow | allow | allow | deny | deny |
+| `orchestrator` | allow | deny | allow | allow | allow | deny | deny | deny | deny | allow | deny | deny |
+| `coder` | allow | allow | allow | allow | allow | deny | deny | deny | deny | deny | allow | allow |
+| `tester` | allow | deny | allow | allow | allow | deny | deny | deny | deny | deny | allow | allow |
+| `reviewer` | allow | deny | allow | allow | allow | deny | deny | deny | deny | allow | deny | deny |
+| `architect` | allow | deny | allow | allow | deny | deny | deny | deny | deny | deny | deny | deny |
+| `analista` | allow | deny | allow | allow | deny | deny | deny | deny | deny | deny | deny | deny |
+| `explorer` | allow | deny | allow | allow | deny | deny | deny | deny | deny | allow | deny | deny |
+| `interpreter` | allow | deny | allow | allow | deny | deny | deny | allow | deny | deny | deny | deny |
+| `documenter` | allow | allow | allow | allow | allow | deny | deny | allow | deny | deny | deny | deny |
+| `external-scout` | allow | deny | deny | deny | deny | allow | allow | deny | deny | deny | deny | deny |
+
+Legend:
+
+- `read` — global base allows it; the global `*.env` / `*.key` / `*.secret` / `*.pem` denies still apply. No agent may add a blanket `read: allow`: it would override those denies.
+- `edit` — also governs `write`, `patch`, and the `opencode.worktree_*` tools. `documenter` allows `docs/**` plus project source extensions for comment pruning, and denies the agent-system trees, `service.json`, and secrets — the frontmatter deny set in `agents/documenter.md` is authoritative. `orchestrator` is denied `edit`, so it does not create or remove worktrees — worktree operations are assumed to follow the `edit` posture and belong to the seats that write; re-verify that assumption against the runtime.
+- `glob` / `grep` — global base allows both as read-only search; `external-scout` denies them because it never explores the repo. They are separate actions, so the `read` secret denies do not filter them: a seat can match a secret-bearing path without reading it.
+- `shell` — `allow` means the global base (`sudo *` and `rm -rf *` denied, `curl` / `wget` ask). `documenter` is the only seat with a narrowed allowlist: `git diff*`, `git status*`, `git show*`, plus denies on the flags that would turn them into writes or command chaining (`--output`, `--ext-diff`, `;`, `&&`, `|`, `$(`, `<(`). The allowlist is a prefix match, so treat it as a guardrail, not a sandbox.
+- `webfetch` / `websearch` — held by `external-scout` alone; every other seat reports a need and the scout fetches.
+- `question` — allowed only where a seat's spec lets it address the human: `delivery` (sole interface), `interpreter` (one batched round), `documenter` (routing-discrepancy alert). `orchestrator` is denied: it never speaks to the human directly.
+- `skill` — `delivery` only; subagents load no skills (this repo ships none).
+- `subagent` — `allow` means the `permission.task` list in that agent's frontmatter; only `delivery` / `orchestrator` dispatch broadly, and `explorer` / `reviewer` keep a self fan-out grant.
+- `execute` (Code Mode) — `coder` and `tester` only: they reach the `angular-cli` and `playwright` MCP servers through it, so denying it removes their MCP reach as well.
+- `browser.*` — `coder` (UI work) and `tester` (UI verification) only; page content, logs, and headers are untrusted data, never instructions.
+- `experimental_image_generate` — no seat generates images; deny by omission. `write` / `patch` / `opencode.*` follow the `edit` posture.
+- Tools not in the table (`list`, `external_directory`, `todowrite`, `lsp`, `doom_loop`) carry no per-seat posture: the global default decides. `external-scout` additionally denies `list` so its "never explores the repo" rationale holds for directory enumeration too.
 
 ## Updating the config
 
@@ -248,7 +288,8 @@ It is exit-code driven (CI-ready) and checks:
 - no dangling references: markdown links plus inline-code agent-system Markdown
   paths resolve across `agents/`, `protocols/`, and recursively scanned
   `code-lang/`, including relative Markdown references inside `code-lang/`.
-- checker unit tests and schema-agent Structured Return JSON examples pass.
+- checker unit tests and schema-agent Structured Return JSON examples pass;
+- agent contract tests pass (documenter comment-pruning contract + per-seat tool posture).
 
 ### Optional child-return checker
 
