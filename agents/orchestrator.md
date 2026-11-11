@@ -320,6 +320,7 @@ The `interpreter` runs Step 0 (Interpret) in `delivery`, upstream of this seat, 
 - [`broad-investigation-template`](../protocols/broad-investigation-template.md) — use when handing off to `explorer` (or a fan-out).
 - [`dispatch`](../protocols/dispatch.md) — `delivery`'s turn entry (audit reference).
 - [`subagent-spec-template`](../protocols/subagent-spec-template.md) — subagent shape authority and the `output_schema` bridge.
+- [`maintenance`](../protocols/maintenance.md) — periodic read-only maintenance pass; use when the operator asks for a repo health audit, never on your own initiative.
 
 **Built-in skills** (from opencode runtime):
 
