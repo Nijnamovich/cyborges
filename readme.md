@@ -140,6 +140,10 @@ The protocols live in `protocols/`:
 - [`security-review.md`](./protocols/security-review.md) — stack-neutral security
   review: boundary gate, verdicts, severity anchors, and a coverage ledger;
   source-read-only.
+- [`maintenance.md`](./protocols/maintenance.md) — periodic, on-demand repository
+  maintenance: comment minimization, dependency and linter review, docs-vs-scripts
+  verification, merged-branch inventory, additional hygiene checks, and one
+  consolidated read-only report.
 
 ## Coding standards
 
