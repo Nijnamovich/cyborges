@@ -204,16 +204,34 @@ class PerSeatPosture(unittest.TestCase):
             with self.subTest(glob=glob):
                 self.assertEqual(edit[glob], "allow")
         for key in ("agents/*", "protocols/*", "code-lang/*", "scripts/*",
-                    "opencode.json", "readme.md"):
+                    "opencode.json", "service.json"):
             with self.subTest(key=key):
                 self.assertEqual(edit[key], "deny")
+        for key in ("readme.md", "README.md", "CHANGELOG.md", "CONTRIBUTING.md"):
+            with self.subTest(key=key):
+                self.assertEqual(edit[key], "allow")
+        rules = list(edit.items())
+
+        def effective(path):
+            """Last matching rule wins, as the runtime resolves the permission map."""
+            verdict = None
+            for pattern, effect in rules:
+                if fnmatchcase(path, pattern):
+                    verdict = effect
+            return verdict
+
+        # The root docs must WIN last-match-wins, not merely appear as map
+        # values: a regression that moved one above `"*": deny` must fail.
+        for path in ("readme.md", "README.md", "CHANGELOG.md", "CONTRIBUTING.md"):
+            with self.subTest(path=path):
+                self.assertEqual(effective(path), "allow")
         self.assertGreater(list(edit).index("agents/*"), list(edit).index("*.ts"))
 
     def test_documenter_edit_allows_never_reach_protected_paths(self):
         edit = permission_block("documenter")["edit"]
         protected = ("agents/delivery.md", "protocols/orchestrate.md",
                      "code-lang/css/standards.md", "scripts/validate-agent.sh",
-                     "readme.md", "opencode.json", "service.json",
+                     "opencode.json", "service.json", "AGENTS.md",
                      "app/.env", "app/id.key", "app/id.secret", "app/id.pem",
                      "docs/sub/.env", "docs/sub/id.pem", "docs/sub/id.key")
         rules = list(edit.items())
