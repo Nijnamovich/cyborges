@@ -51,6 +51,7 @@ If the request is out of scope, say so in **one sentence** and stop.
 
 - Follow `docs/context/architecture.md` (the project's documented patterns — layering, reactivity, state management as defined there)
 - Favor simplicity
+- **Monorepo-ready boundaries:** design app boundaries so a standalone app can later be lifted into `apps/<app>` and shared code into `packages/<lib>` without restructuring — keep apps decoupled and shared code dependency-free. Do not relocate existing paths just to match a future layout.
 - Design for testability and maintainability
 - Document decisions with rationale
 - All documentation in ENGLISH
