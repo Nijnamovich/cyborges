@@ -21,6 +21,12 @@ Companion: [Design standards](../default/standards.md).
   defaults and retained values can affect which state should render.
 - Keep templates declarative and accessible; track repeated items by stable
   identity. Preserve Angular sanitization and do not bypass it for untrusted data.
+- Provide the router base explicitly with `APP_BASE_HREF` and keep asset URLs
+  independent of `<base>` (`deployUrl`, or absolute URLs including the
+  deployment path); the router must not depend on an authored `<base>` element.
+- Under a CSP with `base-uri 'none'`, every `<base>` is inert. Remove the element
+  and the `baseHref` build option that would re-emit it, rather than relaxing the
+  directive to `'self'`; verify the built `index.html` and that deep links resolve.
 - Test observable component behavior and async transitions with the installed
   testing stack and supported scheduling utilities, not copied flush sequences.
 
@@ -31,6 +37,8 @@ Companion: [Design standards](../default/standards.md).
   [linkedSignal](https://angular.dev/guide/signals/linked-signal)
 - [RxJS interop](https://angular.dev/ecosystem/rxjs-interop) and
   [rxResource API](https://angular.dev/api/core/rxjs-interop/rxResource)
+- [Router base href](https://angular.dev/guide/routing/router-reference#base-href)
+  and [deploy URL](https://angular.dev/tools/cli/deployment#--deploy-url)
 - [Security](https://angular.dev/best-practices/security) and
   [testing](https://angular.dev/guide/testing)
 - [TypeScript handbook](https://www.typescriptlang.org/docs/handbook/intro.html)

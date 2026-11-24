@@ -71,4 +71,4 @@ Severity = likelihood × impact, with five anchors:
 9. Assigning severity to `needs_validation` records.
 10. Writing the report before independent verification or letting prose and JSON disagree.
 ## Cross-references
-[`agents/reviewer.md`](../agents/reviewer.md) · [`broad-investigation-template.md`](./broad-investigation-template.md) · [`subagent-return-check.md`](./subagent-return-check.md) · [`orchestrate.md`](./orchestrate.md)
+[`agents/reviewer.md`](../agents/reviewer.md) · [`owasp-analysis.md`](./owasp-analysis.md) · [`broad-investigation-template.md`](./broad-investigation-template.md) · [`subagent-return-check.md`](./subagent-return-check.md) · [`orchestrate.md`](./orchestrate.md)

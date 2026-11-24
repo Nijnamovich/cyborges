@@ -140,6 +140,10 @@ The protocols live in `protocols/`:
 - [`security-review.md`](./protocols/security-review.md) — stack-neutral security
   review: boundary gate, verdicts, severity anchors, and a coverage ledger;
   source-read-only.
+- [`owasp-analysis.md`](./protocols/owasp-analysis.md) — OWASP application
+  analysis: surface → framework selection, Top 10 matrix, ASVS/API/MASVS
+  companions; builds on `security-review.md` for gate, verdicts, severity and
+  ledger.
 - [`maintenance.md`](./protocols/maintenance.md) — periodic, on-demand repository
   maintenance: comment minimization, dependency and linter review, docs-vs-scripts
   verification, merged-branch inventory, additional hygiene checks, and one

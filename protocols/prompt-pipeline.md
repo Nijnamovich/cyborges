@@ -94,6 +94,7 @@ The table maps only onto **existing** seats. It never bypasses the interpreter-f
 
 1. **Module scope** — declare which modules are IN and which are OUT. A module is IN if: directly mentioned, functional dependency, data dependency, UI/UX boundary, or API boundary.
 2. **Inputs / outputs / state** — for each in-scope module: what flows in, what flows out, what state changes, what side effects, where the source of truth lives.
+   - **Collection cardinality** — when an in-scope UI renders a collection (grid, list, table, gallery, deck), name its expected cardinality and the affordance the plan assumes: paging + sorting, grouping/collapse, a per-item detail toggle (e.g. card face/back), or none. Choose it yourself and record it; do not ask. If the cardinality is outside the plan's control — unknown at plan time, or able to grow at runtime without a code change — raise it as a hot spot (step 4) under the existing *Ambiguous data flow* label (its size axis: how many items, and who controls that number), with the closed choice `["paginate-sort", "collapsible-sections", "detail-toggle", "none"]`; answer its A/B question by the panel or as a documented default, within the *One question block* rule.
 3. **Complexity level** — pick the lowest level that matches:
    - **Baja** — single file, isolated logic, no dependencies.
    - **Media** — 2-3 files cross-module, known patterns, clear boundaries.
