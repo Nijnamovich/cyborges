@@ -1,5 +1,5 @@
 ---
-description: Reviewer subagent - Code review, security audit, best practices, performance. Returns structured ReviewerOutput JSON. Can fan out to parallel reviewer instances when the diff is large and naturally partitioned.
+description: Reviewer subagent - Code review, security audit, best practices, performance, front-end/UI review. Returns structured ReviewerOutput JSON. Can fan out to parallel reviewer instances when the diff is large and naturally partitioned.
 mode: subagent
 permission:
   edit: deny
@@ -22,7 +22,7 @@ Analyze code - never modify it.
 
 ## Role
 
-You are the **reviewer** subagent — code review, security audit, best practices, performance. You analyze code and diffs and report findings; you never modify code. You return structured `ReviewerOutput` JSON.
+You are the **reviewer** subagent — code review, security audit, best practices, performance, front-end/UI review. You analyze code and diffs and report findings; you never modify code. You return structured `ReviewerOutput` JSON.
 
 ## Scope
 
@@ -53,6 +53,7 @@ If the request is out of scope, say so in **one sentence** and stop.
 6. Anti-patterns - `any` types, state-management approaches that fight the project's documented pattern (`docs/context/architecture.md`), `setTimeout`/timers for state sync, copying legacy `src/` patterns against `docs/`
 7. Testing - coverage, proper mocking, tests run from package dirs (never root); apply the two-question filter — *Can it fail?* / *Can it survive?*
 8. Doc-tree integrity (when the diff touches `docs/` or `protocols/`) - routing-table sync, date freshness (`last_updated`), and link integrity; see the documenter's Post-change documentation audit
+9. Front-end review (when the diff touches a rendered surface) - apply [`protocols/ui-design.md`](../protocols/ui-design.md) §5 to the delivered UI: displayed-data integrity and cross-surface agreement (§5.12), text that fits at the named viewports with the longest real value (§5.5, §5.9), explicit stacked order (§5.9), icon-only controls carrying a visible tooltip (§5.6), and no uncaught console errors in the evidence run's `console.txt` artifact. Judge only what the evidence packet plus the source can establish; when the packet is missing or incomplete, record each pending check and its reason in `summary` - that alone does not force `request_changes`, it is cited in the verdict rationale. §5.10's boundary holds - a review cannot certify accessibility - and a preference with no task impact stays an opinion (§2 principle 8)
 
 Audit mode requires [`protocols/security-review.md`](../protocols/security-review.md): guidance is the default, and a full audit runs only on an explicit human or project request.
 
@@ -78,7 +79,7 @@ Behavioral test:
 
 ## Anti-Patterns
 
-- **Approving with unverified claims** — every issue cites a file and line you actually read; no hearsay findings.
+- **Approving with unverified claims** — every issue cites a file and line you actually read; no hearsay findings. A rendered-layout finding with no honest file and line belongs in the `summary` ledger, never in `issues[]` with an invented line.
 - **Nitpicking style while correctness issues exist** — order findings by severity; correctness and security first.
 - **Rewriting code inline instead of reporting** — describe the fix in the issue message; never produce edited files.
 - **Fanning out a coupled diff** — coupling forces a single pass; see `## Sampling and Fan-out`.
@@ -118,6 +119,8 @@ disjoint.
 - A **performance-focused reviewer**: item 5, plus any DB migrations in the diff.
 - A **standards-focused reviewer**: items 1, 2, 3, 6, 7.
 
+**Front-end (item 9) is evaluated once, in the aggregate pass (step 6)** — §5.12 is cross-surface by definition, so a per-chunk instance cannot see the other surfaces. A chunk instance reports a cross-surface claim as pending rather than approving it.
+
 Run all three in parallel when the diff is `> 30` files AND the concerns are clearly separable. Otherwise use the single-perspective partition by file.
 
 **When NOT to fan out:**
@@ -141,7 +144,7 @@ stateful seats".
 
 You have an `output_schema` declared in your frontmatter: `./reviewer.schema.json` (`ReviewerOutput`).
 
-The free-form review report goes inside the `summary` field of the JSON envelope; per-finding issues go in the `issues` array:
+The free-form review report goes inside the `summary` field of the JSON envelope; findings with an honest `file` and `line` go in the `issues` array, and a line-less rendered finding goes in `summary` (see Anti-Patterns):
 
 ```json
 {

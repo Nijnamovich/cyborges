@@ -2,8 +2,9 @@
 
 Creation-time design criteria for front-end work. Applied when a page, screen, view, or a
 coherent set of UI states is **designed or created** — before or alongside the code. It is
-not a review protocol: auditing a built UI is the review seats' job, and no step here ever
-produces an accessibility certificate.
+not a review protocol: auditing a built UI is the reviewer seat's job
+([`agents/reviewer.md`](../agents/reviewer.md), item 9 — Front-end review), and no step here
+ever produces an accessibility certificate.
 
 > Adapted from a human-supplied review specification (`ui-design-reviewer`), inverted from
 > *evaluate an existing UI* to *design a new one*. The measurable rules and the evidence
@@ -35,6 +36,10 @@ produces an accessibility certificate.
   conditions before returning (§7). When a UI-bearing change arrives with no brief, `coder`
   derives the brief fields itself **only for a non-substantial change**, records that
   assumption in its summary, and re-routes a substantial redesign to `architect`.
+- **`tester`** produces the capture part of the evidence packet on delivered work (§7). It
+  captures evidence; it does not judge the design.
+- **`reviewer`** audits a delivered UI against §5 (item 9 — Front-end review). It
+  judges; it never certifies accessibility (§5.10).
 - No seat negotiates these criteria away. A project overrides them only through its
   documented design system and project rules (§3).
 
@@ -156,7 +161,10 @@ Accept when: every form control has a visible, persistent label (icon-only contr
 §5.6's accessible-name requirement instead); every error message names the
 problem and the next step; no essential text is set at a size or weight that fails §5.4 at
 the named viewport; no ambiguous generic label ("OK", "Accept") stands where a specific
-action word is available.
+action word is available; and the longest real value the dataset can produce (the longest
+name, label, or identifier the product can display) fits at every named viewport (§5.9)
+without a mid-word break — the overflow mechanism itself belongs to
+[`code-lang/css/standards.md`](../code-lang/css/standards.md) (this protocol's §3, item 2).
 
 ### 5.6 Affordances and interaction
 
@@ -166,8 +174,10 @@ project's larger floor); drag and drop signals origin, target, and result and ha
 non-drag alternative; destructive actions are guarded; errors are prevented by design.
 
 Accept when: every interactive element is distinguishable from static content without
-hover; every icon-only control has an accessible name; every destructive action has a guard
-(confirmation, undo, or a reversible step); no required interaction is drag-only.
+hover; every icon-only control has an accessible name **and** a visible tooltip carrying that
+same name, and an icon stands without a text label only when the brief's accessibility plan
+names the convention it relies on; every destructive action has a guard (confirmation, undo,
+or a reversible step); no required interaction is drag-only.
 
 ### 5.7 Feedback and system states
 
@@ -180,8 +190,8 @@ operations that are not immediate show a loading indicator; an important or dest
 action is confirmed; double submission is prevented; persistence or loss of unsaved changes
 is communicated; every error state is actionable.
 
-**Evidence rule:** a state that was not designed or not observed is `unverified` — never
-reported as absent, and never assumed unnecessary.
+**Evidence rule:** a state that was not designed or not observed is recorded as `pending-check`
+with reason `unverified` — never reported as absent, and never assumed unnecessary.
 
 ### 5.8 Layout, alignment, and spacing
 
@@ -202,10 +212,11 @@ panels have defined narrow behavior; touch targets hold on touch sizes.
 Accept when: the brief names the supported sizes and what changes at each; no supported size
 requires horizontal scrolling to read; nothing is cut off or overlapped at a named size;
 the brief defines narrow behavior for every named size instead of inheriting the desktop
-layout.
+layout; and where content stacks, the brief states the explicit section order at the
+narrowest named size rather than letting the grid decide it.
 
-**Evidence rule:** sizes not examined are listed as `unverified` — a desktop design does not
-imply a working narrow layout.
+**Evidence rule:** sizes not examined are recorded as `pending-check` with reason `unverified` —
+a desktop design does not imply a working narrow layout.
 
 ### 5.10 Accessibility
 
@@ -232,15 +243,36 @@ over recall; flexibility and efficiency; minimalist design; helpful error recove
 Accept when: the brief records where the user can cancel, go back, or undo, and where the
 design could show what it currently asks the user to remember.
 
+### 5.12 Displayed data integrity and cross-surface coherence
+
+Design: every displayed datum has exactly one named source; derived or formatted values are
+computed from that source, never re-typed per surface; every label reads the field it names.
+When the same entity appears on several surfaces (list, detail, summary, export), any state
+those surfaces do display agrees — no surface shows a stale value while another shows the
+current one.
+
+Accept when: the brief names the single source of each displayed datum and the test that
+proves a change propagates to every surface that displays it — `coder` authors that test and
+`tester` runs it with the matching framework, and a condition whose test does not yet exist
+stays `pending-check` with that gap named; no label is populated from a field other than the
+one it names; where two surfaces display the same state of an entity the values agree; and a
+state the user can change is editable from the primary inspection surface or from an editable
+surface it links to — a deliberately read-only presentation is recorded as a §5.2 disclosure
+decision, not left implicit.
+
+**Evidence rule:** a propagation or label-mapping claim is a `pending-check` (§7) naming the
+test that would prove it; the design alone does not prove it.
+
 ## 6. Evidence discipline at design time
 
 - Assert only what is established. No contrast number without measured values → `contrast:
   pending measurement`. When the project exposes token values for a named foreground/background
-  pair, contrast is measured with a named tool by the seat that can run one instead of left
+  pair, contrast is measured with a named tool by a seat that can run one — `tester` on
+  delivered work, or `coder` when the brief carries the token values — instead of left
   pending; `contrast: pending measurement` is the fallback only when no token values are
-  available or no seat can run a tool. No unobserved state reported as absent → `unverified`.
-  No responsive claim from a single-size design → list the unverified sizes. No accessibility
-  compliance claim from a design → §5.10 boundary.
+  available or no seat can run a tool. No unobserved state reported as absent →
+  `pending-check` (reason `unverified`). No responsive claim from a single-size design → list
+  the unverified sizes. No accessibility compliance claim from a design → §5.10 boundary.
 - Every pending check names three things: what is unverified, why design cannot settle it,
   and what would settle it (tool, device, keyboard, screen reader, or runtime state).
 - A preference is recorded as a design opinion, clearly separate from the acceptance
@@ -257,8 +289,23 @@ are the reason recorded *inside* a `pending-check`; use that single form through
 - `pending-check` never counts as met, and is carried into implementation, not dropped.
 - The brief travels with the implementation. `coder` self-checks every condition and reports
   the `met` / `pending-check` list compactly in `CoderOutput.summary`.
-- Reviewing a delivered page belongs to the review seats. This protocol supplies the
-  criteria; it does not issue the verdict.
+- **Evidence packet for delivered work.** The implementation handoff carries the named viewport
+  sizes examined (§5.9), the states exercised (§5.7), the fixture used — real-shaped data,
+  including the longest dataset value and a filled surface, never the empty state alone — and,
+  for a redesign, captures before and after. The packet is produced by `tester`, never by the
+  seat that issues the verdict and never by the seat that chose the layout; `coder` may attach
+  author evidence, but it is not the packet of record. The orchestrator pre-specifies the
+  packet directory in the `capture` payload, so `tester` writes deterministically named
+  screenshots plus the console log of the run there and reports only real failures in
+  `failures[]` — `TesterOutput` stays unchanged and carries no artifact paths. A missing packet
+  does not block a handoff; it leaves the affected conditions `pending-check` and the step
+  `completed-unverified`, and may receive one bounded `verification-retry`
+  ([`orchestrate.md`](./orchestrate.md) → Outcome feedback (bounded)). The orchestrator passes
+  that directory to `reviewer` together with the diff scope, so the audit reads the same
+  artifacts.
+- Reviewing a delivered page belongs to the reviewer seat
+  ([`agents/reviewer.md`](../agents/reviewer.md), item 9 — Front-end review). This protocol
+  supplies the criteria; it does not issue the verdict.
 
 ## 8. Anti-patterns
 
@@ -279,6 +326,10 @@ are the reason recorded *inside* a `pending-check`; use that single form through
   *how* the CSS is written (§3).
 - [`agents/architect.md`](../agents/architect.md) — produces the design brief.
 - [`agents/coder.md`](../agents/coder.md) — implements the brief and self-checks it.
+- [`agents/reviewer.md`](../agents/reviewer.md) — audits a delivered UI against §5 (item 9 —
+  Front-end review); it does not certify accessibility.
+- [`agents/tester.md`](../agents/tester.md) — produces the capture part of the evidence packet
+  (`capture` payload).
 - [WCAG 2.2](https://www.w3.org/TR/WCAG22/) — the accessibility reference behind §5.4 and
   §5.10.
 - [`orchestrate.md`](./orchestrate.md) → thinking rule 1 — read the project's `docs/` before
