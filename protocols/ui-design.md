@@ -9,9 +9,6 @@ produces an accessibility certificate.
 > *evaluate an existing UI* to *design a new one*. The measurable rules and the evidence
 > discipline are preserved; each rule is restated as a design-time decision plus a checkable
 > acceptance condition.
->
-> Principle 9 paraphrases `google-labs-code/design.md` (`PHILOSOPHY.md`, Apache-2.0); the
-> wording is original.
 
 ## 1. Scope and seats
 
