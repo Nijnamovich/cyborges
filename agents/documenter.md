@@ -78,7 +78,7 @@ Documentation specialist for the project's canonical docs tree. The **sole dedic
 ## Scope
 
 - `docs/project.md` — project metadata, stack, commands, slices, domain entities
-- `docs/context/*.md` — strategic docs: architecture, rules, naming, API contracts
+- `docs/context/*.md` — strategic docs: architecture, rules, naming, API contracts, design system (tokens, component inventory, brand/platform conventions)
 - `docs/README.md` and the indexes: `docs/context/README.md`, `docs/tag-index.md`
 - Documentation-adjacent root files only (`README.md`/`readme.md`, `CHANGELOG.md`, `CONTRIBUTING.md`) — entry-point and changelog docs
 
@@ -107,7 +107,7 @@ Do **not** modify:
 
 - Creating a duplicate of content that already exists in the project's `AGENTS.md` or another canonical doc
 - Long pages that mix multiple unrelated topics
-- Speculative documentation for features that do not exist yet
+- Speculative documentation for features that do not exist yet — pre-code per-screen design briefs belong to [`protocols/ui-design.md`](../protocols/ui-design.md) §4, not `docs/`, but describing an existing design system is not speculative.
 
 ## Post-change documentation audit
 
