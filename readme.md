@@ -56,7 +56,7 @@ path. The read tool does not expand `~`.
 │   ├── orchestrator.md          # Coordinator (deeply delegable)
 │   ├── coder.md                 # Implementation (language=angular|go|css)
 │   ├── tester.md                # Tests (framework=vitest|karma-jasmine|playwright|go)
-│   ├── reviewer.md              # Code review
+│   ├── reviewer.md              # Code review, front-end/UI review
 │   ├── architect.md             # Design
 │   ├── explorer.md              # Search and mapping (read-only)
 │   ├── external-scout.md        # External docs via webfetch
@@ -96,7 +96,7 @@ dispatch rules — is the authoritative table in `agents/orchestrator.md` →
 | `orchestrator` | Executes Phase 2 (Reduce), coordinates multi-step work, fans out subagents. |
 | `coder` | Implementation (`language=angular|go|css`). Returns `CoderOutput`. |
 | `tester` | Tests (`framework=vitest|karma-jasmine|playwright|go`). Returns `TesterOutput`. |
-| `reviewer` | Code review, security, performance. Returns `ReviewerOutput`. |
+| `reviewer` | Code review, security, performance, front-end/UI review. Returns `ReviewerOutput`. |
 | `architect` | Design, boundaries, patterns. Returns `ArchitectOutput`. |
 | `analista` | Second opinion, plan critique, stuck-recovery. Returns `AnalystOutput`. |
 | `explorer` | Search and mapping in the repo. Returns `ExplorerOutput`. |
@@ -149,11 +149,12 @@ The protocols live in `protocols/`:
   maintenance: comment minimization, dependency and linter review, docs-vs-scripts
   verification, merged-branch inventory, additional hygiene checks, and one
   consolidated read-only report.
-- [`ui-design.md`](./protocols/ui-design.md) — creation-time UI design criteria for pages and
-  screens: a design brief, ten design domains plus usability heuristics with checkable
-  acceptance conditions, the WCAG 2.2 AA contrast rules, and an evidence discipline that
-  marks unmeasured or unobserved claims as pending; used by `architect` (design) and `coder`
-  (`language=angular|css`).
+- [`ui-design.md`](./protocols/ui-design.md) — UI design criteria for pages and screens: a
+  design brief, eleven design domains plus usability heuristics with checkable acceptance
+  conditions, the WCAG 2.2 AA contrast rules, and an evidence discipline that marks unmeasured
+  or unobserved claims as pending; used by `architect` (design), `coder`
+  (`language=angular|css`, implementation), `tester` (capture evidence) and `reviewer`
+  (delivered-UI audit).
 - [`system-design-review.md`](./protocols/system-design-review.md) — operating loop for a
   non-UI system/service/component design: scope → estimation → high-level design → deep dive →
   trade-offs → wrap-up, with back-of-envelope discipline and checkable design acceptance

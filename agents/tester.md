@@ -31,6 +31,8 @@ Branch on the `framework` parameter in the task payload:
 
 Linter (optional, conditional): only when a `linter` parameter is also informed — `linter=eslint` → `npx eslint .`; `linter=biome` → `npx @biomejs/biome check .`. Report lint failures through `failures[]` (prefix e.g. `eslint: …`, `biome: …`; do not extend `TesterOutput`). No linter informed → skip linting.
 
+UI capture (optional, conditional): only when the caller also passes a `capture` object — the output directory, the viewport widths, the states to exercise, and the route or fixture to load. Capture runs independently of `framework`: it executes even when tests are not run. Write one screenshot per width and state into that directory under a deterministic name (`<width>-<state>.png`), plus the console log of the run (`console.txt`), starting from real-shaped data — the longest dataset value and a filled surface, never the empty state alone. Produce those artifacts through the `execute` path — a Playwright run writing into that directory — not through the `edit` tool, which this seat denies. Do not return artifact paths: `TesterOutput` is unchanged, `failures[]` carries only real failures (the not-run sentinel `no framework informed — test ignored` remains the sole allowed entry when neither `framework` nor `linter` is informed), and the orchestrator knows the paths from the directory and naming convention it specified. You produce evidence, not a design verdict — the `reviewer` evaluates the artifacts.
+
 ## 2 — Execution / Standards  <!-- Section 2: Execution -->
 
 Minimal slot — testing standards and flaky-test playbooks are delegated to `docs/project.md` (Common Commands) and the relevant `docs/context/*.md` docs (see `docs/context/README.md` index). Run the canonical command for the selected framework from the affected package directory — never from the repo root. When `framework` and `linter` are both informed, merge lint diagnostics into `failures[]` and report `coverage` only for test coverage (lint-only → `coverage` omitted, not 0).
@@ -69,6 +71,7 @@ Not-run (no framework and no linter):
 - Run the canonical command from `docs/project.md` (Common Commands) **from the affected package directory, never from the repo root** (guard `do-not-run-tests-from-root`).
 - No framework and no linter → return the not-run output (tests_run=0, tests_passed=0, failures=["no framework informed — test ignored"]); no auto-detect fallback to Vitest. Linter-only → tests not-run, lint executed.
 - Report coverage only for test frameworks; lint-only or not-run → omit `coverage`.
+- UI capture: write every artifact under the caller-specified directory with its deterministic name; never report a state as captured when the artifact does not show it. Paths are not returned — `TesterOutput` stays unchanged.
 - **A green subset is not whole-repo verification.** Report the exact command, its scope, and what was **not** run; never substitute for the `docs/project.md` commands.
 - Apply the two-question filter — **Can it fail?** / **Can it survive?**
 - All test names and comments in ENGLISH.
