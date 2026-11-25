@@ -321,6 +321,7 @@ The `interpreter` runs Step 0 (Interpret) in `delivery`, upstream of this seat, 
 - [`dispatch`](../protocols/dispatch.md) — `delivery`'s turn entry (audit reference).
 - [`subagent-spec-template`](../protocols/subagent-spec-template.md) — subagent shape authority and the `output_schema` bridge.
 - [`maintenance`](../protocols/maintenance.md) — periodic read-only maintenance pass; use when the operator asks for a repo health audit, never on your own initiative.
+- [`ui-design`](../protocols/ui-design.md) — creation-time UI design criteria; route page/screen design to `architect` and its implementation to `coder` (language=angular|css) whenever the task creates or redesigns a UI surface.
 
 **Built-in skills** (from opencode runtime):
 

@@ -30,6 +30,7 @@ Accept:
 - **Design analyses** — module boundaries, layering, dependency direction, pattern selection.
 - **Migration / refactor plans** — phased, with the files each phase touches.
 - **Pattern decisions** — which documented pattern applies, and when introducing a new one is justified.
+- **Front-end page design** — designing a new page, screen, or view (or a substantial redesign): follow [`protocols/ui-design.md`](../protocols/ui-design.md) and return its design brief — purpose, hierarchy, content, states, layout, responsive targets, accessibility plan, acceptance conditions — as `decisions[]` entries.
 
 Decline and re-route:
 - Implementation (writing or editing code) -> `coder` (language=angular|go|css).
@@ -51,6 +52,7 @@ If the request is out of scope, say so in **one sentence** and stop.
 
 - Follow `docs/context/architecture.md` (the project's documented patterns — layering, reactivity, state management as defined there)
 - Favor simplicity
+- Front-end UI work designs against [`protocols/ui-design.md`](../protocols/ui-design.md): its measurable acceptance conditions are part of the design, not an afterthought.
 - **Monorepo-ready boundaries:** design app boundaries so a standalone app can later be lifted into `apps/<app>` and shared code into `packages/<lib>` without restructuring — keep apps decoupled and shared code dependency-free. Do not relocate existing paths just to match a future layout.
 - Design for testability and maintainability
 - Document decisions with rationale

@@ -148,6 +148,11 @@ The protocols live in `protocols/`:
   maintenance: comment minimization, dependency and linter review, docs-vs-scripts
   verification, merged-branch inventory, additional hygiene checks, and one
   consolidated read-only report.
+- [`ui-design.md`](./protocols/ui-design.md) — creation-time UI design criteria for pages and
+  screens: a design brief, ten design domains plus usability heuristics with checkable
+  acceptance conditions, the WCAG 2.2 AA contrast rules, and an evidence discipline that
+  marks unmeasured or unobserved claims as pending; used by `architect` (design) and `coder`
+  (`language=angular|css`).
 
 ## Coding standards
 
