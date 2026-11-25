@@ -57,6 +57,10 @@ like X".
    else is recorded as unverified (§6).
 8. **Personal taste is not a usability problem.** A preference with no task impact is an
    opinion, not a design defect, and never an acceptance failure.
+9. **References borrow traits, not atmospheres.** A concrete reference ("a 1970s graduate
+   lecture handout") communicates intent faster than an adjective list, but it also imports
+   traits nobody asked for: name the traits meant to be borrowed and the ones explicitly
+   not.
 
 ## 3. Precedence
 
@@ -81,11 +85,11 @@ empty field is a declared gap, not an omission.
 
 | Field | Must state | Fails when |
 |---|---|---|
-| Purpose & primary task | One sentence: what the user accomplishes here. | The screen has two primary tasks, or none. |
+| Purpose & primary task | One sentence: what the user accomplishes here, concrete enough that a third party can name the visual consequence it implies. | The screen has two primary tasks or none; the sentence is an adjective list with no derivable visual consequence. |
 | Users & entry context | Who arrives, from where, on which device class. | It assumes a single happy-path entry. |
-| Visual hierarchy | The primary action, the secondary tier, what is subordinate. | Two elements compete as the primary focus. |
+| Visual hierarchy | The primary action, the secondary tier, what is subordinate; for any cited reference, the trait being borrowed (density, type scale, contrast, rhythm). | Two elements compete as the primary focus, or a cited reference names no borrowed trait. |
 | Content & disclosure | Content inventory; what is always visible; what sits behind progressive disclosure. | Necessary capability is hidden to look minimal. |
-| Design-system usage | Tokens and components reused; each new variant with its functional reason. | A one-off pattern appears with no recorded gap. |
+| Design-system usage | Tokens and components reused, with one actual in-repo source path per distinct source file — or the package/import specifier when the system is an external dependency — plus a section `#anchor` when the target doc has one; an unresolvable path is a declared gap; each new variant with its functional reason. | A one-off pattern appears with no recorded gap, or a cited source path is invented or dead. |
 | States | Every applicable state from §5.7, with its message or affordance. | Only the happy path is designed. |
 | Layout & responsive targets | Grid/structure, spacing scale, named viewport or container sizes and what reflows at each. | It names no sizes, or claims "responsive" without saying what changes. |
 | Interaction & affordances | Interaction model, hit areas, destructive-action guards, non-drag alternatives. | An interaction is assumed to work because the mock suggests it. |
@@ -231,9 +235,12 @@ design could show what it currently asks the user to remember.
 ## 6. Evidence discipline at design time
 
 - Assert only what is established. No contrast number without measured values → `contrast:
-  pending measurement`. No unobserved state reported as absent → `unverified`. No responsive
-  claim from a single-size design → list the unverified sizes. No accessibility compliance
-  claim from a design → §5.10 boundary.
+  pending measurement`. When the project exposes token values for a named foreground/background
+  pair, contrast is measured with a named tool by the seat that can run one instead of left
+  pending; `contrast: pending measurement` is the fallback only when no token values are
+  available or no seat can run a tool. No unobserved state reported as absent → `unverified`.
+  No responsive claim from a single-size design → list the unverified sizes. No accessibility
+  compliance claim from a design → §5.10 boundary.
 - Every pending check names three things: what is unverified, why design cannot settle it,
   and what would settle it (tool, device, keyboard, screen reader, or runtime state).
 - A preference is recorded as a design opinion, clearly separate from the acceptance

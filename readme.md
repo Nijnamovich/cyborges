@@ -66,6 +66,7 @@ path. The read tool does not expand `~`.
 │   └── *.schema.json            # Structured-return schemas
 │
 ├── protocols/                   # Agent operating conventions (read on demand)
+│   └── docs-templates/          # Copyable per-project docs skeleton (never a global docs/)
 ├── code-lang/                   # Coding standards (read on demand)
 │   ├── default/standards.md      # Language-agnostic design baseline
 │   ├── angular/standards.md      # Angular-specific guidance and references
@@ -153,6 +154,30 @@ The protocols live in `protocols/`:
   acceptance conditions, the WCAG 2.2 AA contrast rules, and an evidence discipline that
   marks unmeasured or unobserved claims as pending; used by `architect` (design) and `coder`
   (`language=angular|css`).
+- [`system-design-review.md`](./protocols/system-design-review.md) — operating loop for a
+  non-UI system/service/component design: scope → estimation → high-level design → deep dive →
+  trade-offs → wrap-up, with back-of-envelope discipline and checkable design acceptance
+  conditions.
+- [`design-tradeoff-analysis.md`](./protocols/design-tradeoff-analysis.md) — structured option
+  comparison: named drivers, at least two options plus "do nothing", reversibility and cost,
+  then an ADR, with genuine ties escalated to `analista`.
+- [`external-knowledge-ingestion.md`](./protocols/external-knowledge-ingestion.md) —
+  license-gated intake of external knowledge: a hard-stop license gate, inventory → taxonomy →
+  distill → attribute → register → review, untrusted-content rules, and bounded reads.
+- [`design-doc-template.md`](./protocols/design-doc-template.md) — template scaffold for the
+  durable design document a system-design review produces.
+- [`adr-template.md`](./protocols/adr-template.md) — template scaffold for a one-decision
+  Architecture Decision Record, including naming, superseding, and registry rules.
+- [`capacity-estimate-template.md`](./protocols/capacity-estimate-template.md) — template
+  scaffold for a back-of-envelope worksheet covering traffic, storage, bandwidth, cache, and
+  fan-out.
+- [`system-design-primitives.md`](./protocols/system-design-primitives.md) — offline-fallback
+  catalog of 28 distilled system-design primitives, one per source chapter, with attribution
+  and per-chapter links.
+
+`system-design-review.md`, `design-tradeoff-analysis.md`, and
+`external-knowledge-ingestion.md` are operating protocols; the `-template.md` files are
+copyable scaffolds, and `system-design-primitives.md` is a read-only catalog.
 
 ## Coding standards
 
@@ -273,6 +298,13 @@ Legend:
   model is explicit, and keep every other per-agent field (`description`,
   `mode`, `permission`, `output_schema`) in the agent's frontmatter.
 - **Update the global install** → `git pull` in the `~/.config/opencode` clone.
+- **Refresh or add an external reference** → edit the `references` block in `opencode.json`,
+  then restart opencode or start a new session. Validation resolves only a reference's
+  `path`; `repository`-style references are not fetched during validation, so the check needs
+  no network.
+- **Add a protocol** → create `protocols/<name>.md`, add a matching bullet in the Protocols
+  section above, use the `-template.md` suffix for copyable scaffolds, and run
+  `bash scripts/validate-agent.sh`.
 
 ## Validating the config
 
